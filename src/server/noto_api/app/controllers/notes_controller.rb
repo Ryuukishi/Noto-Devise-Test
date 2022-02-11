@@ -1,13 +1,11 @@
 class NotesController < ApplicationController
-  # before_action :authenticate_user!
+  before_action :authenticate_user!
   before_action :set_note_by_id, only: [:show, :update]
   before_action :set_note_tags_and_join, only: [:destroy]
   before_action :read_notes, only: [:index, :destroy]
 
   def index
-    # if user_signed_in?
       render json: @notes.order("id ASC")
-    # end
   end
   
   def show

@@ -5,6 +5,7 @@ import VisibilityButton from "./VisibilityButton";
 import DeleteButton from "./DeleteButton";
 import EditButton from "./EditButton";
 import {
+  Stack,
   Button,
   ButtonGroup,
   Card,
@@ -24,9 +25,11 @@ function Note(props) {
     joins,
     tags,
     deleteNote,
+    jwt,
   } = useContext(Context);
   const { title, description, code, isPublic, noteId } = props;
   const [visibility, setVisibility] = useState(isPublic);
+
   const noteJoins = [];
   joins.forEach((join) => {
     if (join.note_id === noteId) {
@@ -44,7 +47,10 @@ function Note(props) {
     deleteNote(noteId);
     const options = {
       method: "DELETE",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -63,7 +69,10 @@ function Note(props) {
     setVisibility(!isPublic);
     const options = {
       method: "PATCH",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -79,15 +88,16 @@ function Note(props) {
     await fetch(`/api/notes/${noteId}`, options);
     const newNotes = await resetNotes();
     setNotes(newNotes);
+    console.log(visibility);
   };
 
   let truncatedTags = [];
-  if (noteTags.length > 3) {
+  if (noteTags.length > 2) {
     truncatedTags = noteTags.slice(0, 2);
   } else {
     truncatedTags = [...noteTags];
   }
-  console.log("truncatedtags after", truncatedTags);
+
   const tagList = (
     <ButtonGroup variant="contained" aria-label="outlined primary button group">
       {truncatedTags.map((tag, index) => (
@@ -113,13 +123,15 @@ function Note(props) {
           </CardContent>
         </CardActionArea>
       </Link>
-      {tagList}
-      <EditButton noteId={noteId} />
-      <DeleteButton onDeleteNote={onDeleteNote} />
-      <VisibilityButton
-        isPublic={visibility}
-        toggleVisibility={toggleVisibility}
-      />
+      <Stack direction="row" sx={{ ml: 2 }}>
+        {tagList}
+        <EditButton noteId={noteId} />
+        <DeleteButton onDeleteNote={onDeleteNote} />
+        <VisibilityButton
+          isPublic={visibility}
+          toggleVisibility={toggleVisibility}
+        />
+      </Stack>
     </Card>
   );
 }

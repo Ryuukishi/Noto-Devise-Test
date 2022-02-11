@@ -1,4 +1,4 @@
-import CustomButton from "../components/CustomButton";
+import NavButton from "../components/NavButton";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/login_register.css";
 
 const LoginPage = () => {
-  const { setUser, jwt, setJwt } = useContext(Context);
+  const { setUser, setJwt, notes } = useContext(Context);
   const initialFormState = {
     email: "",
     password: "",
@@ -36,17 +36,15 @@ const LoginPage = () => {
     };
     const loginResponse = await fetch("/api/users/sign_in", options);
     const loginJson = await loginResponse.json();
+    console.log(loginResponse);
     const newJwt = loginResponse.headers.get("authorization");
     setJwt(newJwt);
-    console.log(...loginResponse.headers);
-    console.log();
     if (loginJson.message === "You are logged in.") {
       setUser(true);
       navigate("/");
     }
-    console.log(loginJson);
   };
-  console.log("jwt", jwt);
+  console.log("notes login", notes);
 
   const handleChange = (event) => {
     setFormData({
@@ -70,16 +68,16 @@ const LoginPage = () => {
           <Typography sx={{ color: "#858585", fontSize: 36 }}>Login</Typography>
 
           <TextField
+            id="1"
             sx={{ width: 300 }}
-            id="outlined-basic"
             label="Email"
             variant="filled"
             onChange={handleChange}
             name="email"
           />
           <TextField
+            id="2"
             sx={{ width: 300 }}
-            id="outlined-basic"
             label="Password"
             type="password"
             variant="filled"

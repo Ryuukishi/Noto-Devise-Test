@@ -15,24 +15,29 @@ function App() {
   // const [context, setContext] = useState({});
 
   const [user, setUser] = useState(null);
-  const [jwt, setJwt] = useState("");
+  const [jwt, setJwt] = useState(null);
   const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState([notes]);
   const [tags, setTags] = useState([]);
   const [joins, setJoins] = useState([]);
   const [lineNumbers, setLineNumbers] = useState(true);
 
-  useEffect(() => {
-    fetch("/api/notes", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((notes) => setNotes(notes))
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   console.log("fetch", jwt);
+  //   fetch("/api/notes", {
+  //     method: "GET",
+  //     withCredentials: true,
+  //     credentials: "include",
+  //     headers: {
+  //       Authorization: jwt,
+  //       "Content-Type": "application/json",
+  //       Accept: "application/json",
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((notes) => setNotes(notes))
+  //     .catch((err) => console.log(err));
+  // }, [jwt]);
 
   useEffect(() => {
     setFilteredNotes(notes);
@@ -40,7 +45,11 @@ function App() {
 
   useEffect(() => {
     fetch("/api/tags", {
+      method: "GET",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -52,7 +61,11 @@ function App() {
 
   useEffect(() => {
     fetch("/api/note_tags", {
+      method: "GET",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -65,7 +78,10 @@ function App() {
   const resetNotes = async () => {
     const options = {
       method: "GET",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -79,7 +95,10 @@ function App() {
   const resetTags = async () => {
     const options = {
       method: "GET",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -93,7 +112,10 @@ function App() {
   const resetJoins = async () => {
     const options = {
       method: "GET",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         "Content-Type": "application/json",
         Accept: "application/json",
       },

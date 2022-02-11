@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import CustomButton from "../components/CustomButton";
+import NavButton from "../components/NavButton";
 import Typography from "@mui/material/Typography";
 import "../styles/landing.css";
 
@@ -13,13 +13,13 @@ const LandingPage = () => {
           Create, Collaborate, Share
         </Typography>
         <Stack direction="row">
-          <CustomButton
+          <NavButton
             path="/login"
             text="Login"
             variant="outlined"
             size="large"
           />
-          <CustomButton
+          <NavButton
             path="/register"
             text="Register"
             variant="contained"

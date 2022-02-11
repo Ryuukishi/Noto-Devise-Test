@@ -10,15 +10,16 @@ import BackButton from "../components/BackButton";
 
 const EditNote = () => {
   const { noteId } = useParams();
-  const initialNoteState = {
+  const initialFormState = {
     title: "",
     description: "",
     code: "",
-    public: "",
+    public: false,
     tags: [],
   };
-  const [note, setNote] = useState(initialNoteState);
-  const { tags, setNotes, resetNotes } = useContext(Context);
+
+  const [formData, setFormData] = useState(initialFormState);
+  const { tags, setNotes, resetNotes, jwt } = useContext(Context);
   const [toggleTags, setToggleTags] = useState([]);
   const [tagNames, setTagNames] = useState([]);
 
@@ -26,17 +27,19 @@ const EditNote = () => {
 
   useEffect(() => {
     fetch(`/api/notes/${noteId}`, {
+      method: "GET",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
     })
       .then((response) => response.json())
-      .then((note) => setNote(note))
+      .then((note) => setFormData(note))
       .catch((err) => console.log(err));
   }, []);
-
-  console.log(note)
 
   useEffect(() => {
     const tagArray = [];
@@ -53,19 +56,18 @@ const EditNote = () => {
       tags: newTags,
     });
     setToggleTags(newTags);
-    console.log(newTags)
   };
 
   const handleAddTagOnBlur = (event) => {
-    const tagsArray = tagNames;
-    if (tagsArray.includes(event.target.value)) {
+    if (tagNames.includes(event.target.value)) {
       return;
     } else if (event.target.value === "") {
       return;
     } else {
+      const tagsArray = [...tagNames];
       tagsArray.push(event.target.value);
+      setTagNames(tagsArray);
     }
-    setTagNames(tagsArray);
     console.log("tag names: ", tagNames);
   };
 
@@ -82,53 +84,58 @@ const EditNote = () => {
       ))}
     </ToggleButtonGroup>
   );
-  
+
   const handleChange = (event) => {
-    setNote({ ...note, [event.target.name]: event.target.value });
-    console.log(note);
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const toggleVisibility = () => {
-    setNote({ ...note, public: !note.public });
-    console.log(note);
+    setFormData({ ...formData, public: !formData.public });
   };
 
   const onEditNote = async () => {
     const options = {
       method: "PATCH",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: note.id,
-        title: note.title,
-        description: note.description,
-        code: note.code,
-        public: note.public,
-        tags: note.tags,
+        id: formData.id,
+        title: formData.title,
+        description: formData.description,
+        code: formData.code,
+        public: formData.public,
+        tags: formData.tags,
       }),
     };
 
     await fetch(`/api/notes/${noteId}`, options);
-    const newNotes = await resetNotes();
-    console.log(newNotes);
-    setNotes(newNotes);
+    const updatedNotes = await resetNotes();
+    setNotes(updatedNotes);
     navigate("/");
   };
 
+  console.log(formData);
+
   return (
-    <form onSubmit={onEditNote}>
+    <form>
       <div>
         <TextField
           name="title"
-          value={note.title}
+          value={formData.title}
           onChange={handleChange}
           variant="outlined"
           sx={{ my: "1rem", mx: "1rem", width: "45%" }}
         />
         <VisibilityButton
-          isPublic={note.public}
+          isPublic={formData.public}
           toggleVisibility={toggleVisibility}
           sx={{ my: "1.5rem" }}
         />
@@ -155,7 +162,7 @@ const EditNote = () => {
         <TextField
           name="description"
           label="Description"
-          value={note.description}
+          value={formData.description}
           onChange={handleChange}
           variant="outlined"
           multiline
@@ -165,7 +172,7 @@ const EditNote = () => {
         <TextField
           name="code"
           label="Code"
-          value={note.code}
+          value={formData.code}
           onChange={handleChange}
           variant="outlined"
           multiline
@@ -174,7 +181,11 @@ const EditNote = () => {
         />
       </div>
       <BackButton />
-      <Button type="submit" variant="contained" sx={{ mx: "1rem", my: "1rem" }}>
+      <Button
+        onClick={onEditNote}
+        variant="contained"
+        sx={{ mx: "1rem", my: "1rem" }}
+      >
         Save
       </Button>
     </form>

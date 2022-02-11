@@ -1,4 +1,5 @@
 class Users::SessionsController < Devise::SessionsController
+  before_action :find_user
   respond_to :json
 
   private
@@ -21,7 +22,12 @@ class Users::SessionsController < Devise::SessionsController
     render json: { message: "Hmm nothing happened."}, status: :unauthorized
   end
 
+  private
+
   def user_params
     params.require(:user).permit(:email, :password)
+  end
+  def find_user
+    @user = User.find_by(email: params[:email])
   end
 end

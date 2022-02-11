@@ -26,6 +26,7 @@ const NewNoteForm = () => {
     resetNotes,
     resetJoins,
     resetTags,
+    jwt,
   } = useContext(Context);
   const [formData, setFormData] = useState(initialFormState);
   const [toggleTags, setToggleTags] = useState([]);
@@ -55,15 +56,17 @@ const NewNoteForm = () => {
       tags: newTags,
     });
     setToggleTags(newTags);
-    console.log(newTags)
-
+    console.log(newTags);
   };
 
   const onCreateNote = async (event) => {
     event.preventDefault();
     const options = {
       method: "POST",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -82,8 +85,7 @@ const NewNoteForm = () => {
     ) {
       alert("Can't be empty");
     } else {
-      const newNoteResponse = await fetch("/api/notes", options);
-      // const newNotesJson = await newNoteResponse.json();
+      await fetch("/api/notes", options);
       setFormData(initialFormState);
       const newNotes = await resetNotes();
       const newTags = await resetTags();

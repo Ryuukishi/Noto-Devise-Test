@@ -1,11 +1,14 @@
 import Box from "@mui/material/Box";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
+import Context from "../context/context";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import {
   a11yDark,
   atomDark,
@@ -96,6 +99,7 @@ const ViewNote = () => {
     public: "",
   };
 
+  const { jwt, joins, tags } = useContext(Context);
   const { noteId } = useParams();
   const [note, setNote] = useState(initialNoteState);
   const [language, setLanguage] = useState("plaintext");
@@ -105,7 +109,11 @@ const ViewNote = () => {
 
   useEffect(() => {
     fetch(`/api/notes/${noteId}`, {
+      method: "GET",
+      withCredentials: true,
+      credentials: "include",
       headers: {
+        Authorization: jwt,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -125,7 +133,26 @@ const ViewNote = () => {
     console.log("wrap lines:", wrapLongLines);
   };
 
-  console.log(note);
+  const noteJoins = [];
+  joins.forEach((join) => {
+    if (join.note_id === note.id) {
+      noteJoins.push(join);
+    }
+  });
+
+  const noteTags = [];
+  noteJoins.forEach((join) => {
+    const newTag = tags.find((tag) => join.tag_id === tag.id);
+    noteTags.push(newTag);
+  });
+
+  const tagList = (
+    <ButtonGroup variant="text" aria-label="outlined primary button group">
+      {noteTags.map((tag, index) => (
+        <Button key={index}>{tag.title}</Button>
+      ))}
+    </ButtonGroup>
+  );
 
   return (
     <Paper elevation={3} sx={{ p: 6, m: 6, minHeight: 800 }}>
@@ -133,6 +160,8 @@ const ViewNote = () => {
         <Typography sx={{ color: "#3884fd", fontSize: 28 }}>
           {note.title}
         </Typography>
+        <Divider />
+        {tagList}
         <Divider />
         <Typography>{note.description}</Typography>
         <Divider />

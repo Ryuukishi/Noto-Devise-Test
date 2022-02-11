@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import CustomButton from "../components/CustomButton";
+import NavButton from "../components/NavButton";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
@@ -145,27 +145,61 @@ const RegisterPage = () => {
       );
     }
   };
+
+  const onRegisterSubmit = async (event) => {
+    event.preventDefault();
+    const options = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: {
+          email: event.target.email.value,
+          password: event.target.password.value,
+        },
+      }),
+    };
+    const loginResponse = await fetch("/api/users/sign_in", options);
+    const loginJson = await loginResponse.json();
+    console.log(loginResponse);
+    const newJwt = loginResponse.headers.get("authorization");
+    setJwt(newJwt);
+    if (loginJson.message === "You are logged in.") {
+      setUser(true);
+      navigate("/");
+    }
+  };
+
   console.log("formdata", formData);
   return (
     <>
       <div id="loginRegisterBackground"></div>
-      <Stack direction="column" alignItems="center" spacing={4} sx={{ mt: 20 }}>
-        <Typography sx={{ color: "#858585", fontSize: 36 }}>
-          Register
-        </Typography>
-        {inputField("First Name", "firstName", firstNameValid)}
-        {inputField("Last Name", "lastName", lastNameValid)}
-        {inputField("Email", "email", emailValid)}
-        {passwordInputField(passwordValid)}
-        <Stack direction="row">
-          <CustomButton
-            // path="/register"
-            text="Register"
-            variant="contained"
-            size="large"
-          />
+      <form>
+        <Stack
+          direction="column"
+          alignItems="center"
+          spacing={4}
+          sx={{ mt: 20 }}
+        >
+          <Typography sx={{ color: "#858585", fontSize: 36 }}>
+            Register
+          </Typography>
+          {inputField("First Name", "firstName", firstNameValid)}
+          {inputField("Last Name", "lastName", lastNameValid)}
+          {inputField("Email", "email", emailValid)}
+          {passwordInputField(passwordValid)}
+          <Stack direction="row">
+            <NavButton
+              // path="/register"
+              text="Register"
+              variant="contained"
+              size="large"
+            />
+          </Stack>
         </Stack>
-      </Stack>
+      </form>
     </>
   );
 };

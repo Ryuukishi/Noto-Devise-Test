@@ -7,12 +7,13 @@ function NotesList() {
   const { filteredNotes } = useContext(Context);
   // setFilteredNotes(notes)
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "80%", position: "absolute", right: 100 }}>
       <Box
         sx={{
           display: "grid",
           gap: 1,
-          gridTemplateColumns: "repeat(6, 1fr)",
+          gridTemplateColumns: "repeat(5, 1fr)",
+          justifyContent: "center",
         }}
       >
         {filteredNotes.map((note, index) => (
