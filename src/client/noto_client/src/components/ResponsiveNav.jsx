@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
@@ -81,8 +82,15 @@ function ResponsiveNav(props) {
   const drawer = (
     <div>
       <Toolbar />
-      <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-      <Divider />
+      <Box alignItems="center" sx={{ ml: 3 }}>
+        <img src="../docs/img/logo_t.png" width="160" />
+      </Box>
+      <TextField
+        sx={{ mt: 6 }}
+        id="outlined-basic"
+        label="Search"
+        variant="outlined"
+      />
       <List>
         <Link to="/new" style={{ textDecoration: "none", color: "black" }}>
           <ListItem button>
@@ -132,17 +140,15 @@ function ResponsiveNav(props) {
         >
           <ListItemText primary="All" />
         </ListItemButton>
-        {["Group1", "Group2", "Group3", "Group4", "Group5", "Group6"].map(
-          (text, index) => (
-            <ListItemButton
-              key={index}
-              selected={selectedGroupIndex === index + 1}
-              onClick={(event) => handleGroupItemClick(event, index)}
-            >
-              <ListItemText primary={text} />
-            </ListItemButton>
-          )
-        )}
+        {["Group1", "Group2"].map((text, index) => (
+          <ListItemButton
+            key={index}
+            selected={selectedGroupIndex === index + 1}
+            onClick={(event) => handleGroupItemClick(event, index)}
+          >
+            <ListItemText primary={text} />
+          </ListItemButton>
+        ))}
       </List>
     </div>
   );
@@ -226,10 +232,6 @@ function ResponsiveNav(props) {
 }
 
 ResponsiveNav.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
   window: PropTypes.func,
 };
 

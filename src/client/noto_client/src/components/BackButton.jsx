@@ -9,7 +9,7 @@ const BackButton = () => {
       type="button"
       variant="outlined"
       onClick={() => {
-        navigate(-1);
+        navigate("/");
       }}
       sx={{ mx: "1rem", my: "1rem" }}
     >
